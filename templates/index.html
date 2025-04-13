@@ -1,0 +1,248 @@
+{% extends "base_page.html" %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap 5 CSS -->
+    <!-- Font Awesome для иконок -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #FF6B6B;
+            --secondary-color: #4ECDC4;
+            --accent-color: #FFE66D;
+        }
+        
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background-color: #F7FFF7;
+            color: #292F36;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 2rem 0;
+            border-bottom: 5px solid var(--accent-color);
+        }
+        
+        .login-container {
+            max-width: 500px;
+            margin: 3rem auto;
+            padding: 2rem;
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-outline-secondary {
+            color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+        
+        .btn-outline-secondary:hover {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+        
+        .features {
+            padding: 3rem 0;
+            background-color: #f0f7f4;
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+        
+        .character {
+            position: absolute;
+            width: 120px;
+            right: 20px;
+            top: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .character {
+                display: none;
+            }
+        }
+        
+        .password-toggle {
+            cursor: pointer;
+            position: absolute;
+            right: 10px;
+            top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Шапка с описанием -->
+    <header class="header text-center position-relative">
+        <div class="container">
+            <img src="https://img.icons8.com/color/96/000000/math-book.png" alt="Математика" class="mb-3">
+            <h1 class="display-4 fw-bold">Незнайка</h1>
+            <h1 class="display-6 fw-bold">Математика для малышей - Играем и учимся!</h1>
+            <h2 class="lead fw-bold">Весёлое приключение в мир цифр и логики!</h2>
+            <img src="static/logo.svg" alt="Незнайка" class="character d-none d-md-block" width="90" height="140">
+        </div>
+    </header>
+
+    <!-- Основное содержимое - форма входа -->
+    <main class="container">
+        <div class="login-container">
+            <h2 class="text-center mb-4">Войдите или зарегистрируйтесь</h2>
+            
+            <form method="post">
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" placeholder="ваш@email.com">
+                </div>
+                
+                <div class="mb-3 position-relative">
+                    <label for="password" class="form-label">Пароль</label>
+                    <input type="password" class="form-control" id="password" placeholder="Пароль">
+                    <i class="fas"></i>
+                </div>
+
+                <p><span class="fw">{% if failedToLogin %}Неправильный логин или пароль{% endif %}</span></p>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary btn-lg" formaction="/login">Войти</button>
+                    <button type="button" class="btn btn-outline-secondary btn-lg" data-bs-toggle="modal" data-bs-target="#registerModal">
+                        Создать аккаунт
+                    </button>
+                </div>
+            </form>
+            
+        </div>
+    </main>
+
+    <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="registerModalLabel">Регистрация нового аккаунта</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="post">
+                    <div class="modal-body">
+                        <!-- <form method="post id="registrationForm"> -->
+                            <div class="mb-3">
+                                <label for="regUsername" class="form-label">Имя ребенка</label>
+                                <input type="text" class="form-control" id="regUsername" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="regAge" class="form-label">Возраст</label>
+                                <select class="form-select" id="regAge" required>
+                                    <option value="">Выберите возраст</option>
+                                    <option value="3">3 года</option>
+                                    <option value="4">4 года</option>
+                                    <option value="5">5 лет</option>
+                                    <option value="6">6 лет</option>
+                                    <option value="7">7 лет</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="regEmail" class="form-label">Email родителя</label>
+                                <input type="email" class="form-control" id="regEmail" required>
+                            </div>
+                            
+                            <div class="mb-3 position-relative">
+                                <label for="regPassword" class="form-label">Пароль</label>
+                                <input type="password" class="form-control" id="regPassword" required>
+                                <i class="fas"></i>
+                            </div>
+                            
+                        <!-- </form> -->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                        <button type="submit" class="btn btn-primary" formaction="/register">Войти</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Возможности проекта -->
+    <section class="features">
+        <div class="container">
+            <h2 class="text-center mb-5">Что ждёт вашего малыша?</h2>
+            
+            <div class="row text-center">
+                <div class="col-md-4 mb-4">
+                    <div class="feature-icon">
+                        <i class="fas fa-calculator"></i>
+                    </div>
+                    <h3>Весёлый счёт</h3>
+                    <p>Игровые задания на сложение и вычитание с красочными картинками</p>
+                </div>
+                
+                <div class="col-md-4 mb-4">
+                    <div class="feature-icon">
+                        <i class="fas fa-shapes"></i>
+                    </div>
+                    <h3>Геометрия</h3>
+                    <p>Изучение фигур, размеров и пространственного мышления</p>
+                </div>
+                
+                <div class="col-md-4 mb-4">
+                    <div class="feature-icon">
+                        <i class="fas fa-medal"></i>
+                    </div>
+                    <h3>Награды</h3>
+                    <p>Система поощрений за успехи в обучении</p>
+                </div>
+                
+                <div class="col-md-4 mb-4">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Развитие</h3>
+                    <p>Постепенное усложнение заданий по мере роста навыков</p>
+                </div>
+                
+                <div class="col-md-4 mb-4">
+                    <div class="feature-icon">
+                        <i class="fas fa-gamepad"></i>
+                    </div>
+                    <h3>Мини-игры</h3>
+                    <p>Обучающие игры для закрепления материала</p>
+                </div>
+                
+                <div class="col-md-4 mb-4">
+                    <div class="feature-icon">
+                        <i class="fas fa-user-friends"></i>
+                    </div>
+                    <h3>Безопасность</h3>
+                    <p>Закрытая среда без рекламы и внешних ссылок</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-dark text-white py-4">
+        <div class="container text-center">
+            <p>© 2025 Математика для малышей. Все права защищены.</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+{% endblock %}
