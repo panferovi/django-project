@@ -3,6 +3,6 @@
     "email": "panferov.ia@phystech.edu",
     "password": "12345678",
     "stats": {
-        "correctAnswers": 5
+        "correct_answers": 5
     }
 }

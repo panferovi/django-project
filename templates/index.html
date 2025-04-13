@@ -137,15 +137,14 @@
                 </div>
                 <form method="post">
                     <div class="modal-body">
-                        <!-- <form method="post id="registrationForm"> -->
                             <div class="mb-3">
                                 <label for="regUsername" class="form-label">Имя ребенка</label>
-                                <input type="text" class="form-control" id="regUsername" required>
+                                <input type="text" class="form-control" name="name" id="regUsername" required>
                             </div>
                             
                             <div class="mb-3">
                                 <label for="regAge" class="form-label">Возраст</label>
-                                <select class="form-select" id="regAge" required>
+                                <select class="form-select" name="age" id="regAge" required>
                                     <option value="">Выберите возраст</option>
                                     <option value="3">3 года</option>
                                     <option value="4">4 года</option>
@@ -157,20 +156,18 @@
                             
                             <div class="mb-3">
                                 <label for="regEmail" class="form-label">Email родителя</label>
-                                <input type="email" class="form-control" id="regEmail" required>
+                                <input type="email" class="form-control" name="email" id="regEmail" required>
                             </div>
                             
-                            <div class="mb-3 position-relative">
+                            <div class="mb-3">
                                 <label for="regPassword" class="form-label">Пароль</label>
-                                <input type="password" class="form-control" id="regPassword" required>
-                                <i class="fas"></i>
-                            </div>
-                            
-                        <!-- </form> -->
+                                <input type="password" class="form-control" name="password" id="regPassword" required>
+                            </div>    
+                            <p><span class="fw">{% if failedToRegister %}Аккаунт с такой почтой уже зарегестрирован, попробуйте войти{% endif %}</span></p>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-                        <button type="submit" class="btn btn-primary" formaction="/register">Войти</button>
+                        <button type="submit" class="btn btn-primary" formaction="/register">Зарегестрироваться</button>
                     </div>
                 </form>
             </div>

@@ -1,7 +1,1 @@
-[
-    {
-        "mail": "panferov.ia@phystech.edu",
-        "id": 0,
-        "isStudent": true
-    }
-]
+[{"email": "panferov.ia@phystech.edu", "userId": 0, "isStudent": true}, {"email": "ad2@asd.ru", "userId": 1, "isStudent": true}]
