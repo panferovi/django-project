@@ -1,8 +1,1 @@
-{
-    "name": "Иван",
-    "email": "panferov.ia@phystech.edu",
-    "password": "12345678",
-    "stats": {
-        "correct_answers": 5
-    }
-}
+{"userId": 0, "name": "\u0418\u0432\u0430\u043d", "email": "panferov.ia@phystech.edu", "password": "12345678", "stats": {"correct_answers": 1}}
