@@ -21,5 +21,6 @@ urlpatterns = [
     path('', views.index),
     path('register', views.register),
     path('login', views.login),
-    path('start_task', views.start_task)
+    path('init_stats', views.init_stats),
+    path('update_stats', views.update_stats),
 ]

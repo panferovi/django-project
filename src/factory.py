@@ -17,9 +17,6 @@ def from_json(filename, cls):
         return schema.load(data)
 
 def to_json(filename, obj):
-    print(filename)
-    print(obj)
-
     items = None
     try:
         items = [asdict(item) for item in obj]

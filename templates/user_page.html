@@ -71,6 +71,10 @@
         }
         
         .progress-bar {
+            height: 100%;
+            width: 0%;
+            border-radius: 15px;
+            transition: width 0.3s ease;
             background-color: #4ecdc4;
             font-weight: bold;
         }
@@ -97,7 +101,7 @@
             <div class="col-md-4 text-end">
                 <div class="d-flex align-items-center justify-content-end">
                     <i class="fas fa-star fa-2x text-warning me-2"></i>
-                    <h3 class="mb-0"><span id="points">{{user.score}}</span> очков</h3>
+                    <h3 class="mb-0"><span id="points">0</span> очков</h3>
                 </div>
                 <small>Твой уровень: <strong>Юный математик</strong></small>
                 <div class="progress mt-1" style="height: 20px;">
@@ -168,13 +172,63 @@
                     </div>
                 </div>
             </div>
-            
-            <div class="progress mt-2">
-                <div class="progress-bar" id="progress-bar" style="width: 0%">0%</div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-2">
+                        <div class="d-flex justify-content-between">
+                            <span>Сложение</span>
+                        </div>
+                        <div class="progress" style="height: 20px;">
+                            <div class="progress-bar progress-bar-striped" id="additionBar"></div>
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <div class="d-flex justify-content-between">
+                            <span>Вычитание</span>
+                        </div>
+                        <div class="progress" style="height: 20px;">
+                            <div class="progress-bar progress-bar-striped" id="subtractionBar"></div>
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <div class="d-flex justify-content-between">
+                            <span>Сравнение чисел</span>
+                        </div>
+                        <div class="progress" style="height: 20px;">
+                            <div class="progress-bar progress-bar-striped" id="comparisonBar"></div>
+                        </div>
+                    </div>        
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-2">
+                        <div class="d-flex justify-content-between">
+                            <span>Логические задачи</span>
+                        </div>
+                        <div class="progress" style="height: 20px;">
+                            <div class="progress-bar progress-bar-striped" id="logicBar"></div>
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <div class="d-flex justify-content-between">
+                            <span>Время и часы</span>
+                        </div>
+                        <div class="progress" style="height: 20px;">
+                            <div class="progress-bar progress-bar-striped" id="timeBar"></div>
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <div class="d-flex justify-content-between">
+                            <span>Задачи с монетами</span>
+                        </div>
+                        <div class="progress" style="height: 20px;">
+                            <div class="progress-bar progress-bar-striped" id="moneyBar"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-    
+
     <!-- Модальное окно с задачей -->
     <div class="modal fade" id="taskModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
@@ -213,50 +267,64 @@
             return cookieValue;
         }
 
-        // Статистика
-        let stats = {
-            correct: 0,
-            wrong: 0,
-            total: 0
-        };
-        
         // Текущая задача
         let currentTask = null;
         let currentTopic = '';
-        
-        // Обновление статистики на странице
-        function updateStats() {
-            document.getElementById('correct-count').textContent = stats.correct;
-            document.getElementById('wrong-count').textContent = stats.wrong;
-            document.getElementById('total-count').textContent = stats.total;
-            
-            const progress = stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0;
-            document.getElementById('progress-bar').style.width = progress + '%';
-            document.getElementById('progress-bar').textContent = progress + '%';
-            
-            // Проверка наград
-            if (stats.correct >= 5) document.getElementById('reward1').classList.add('unlocked');
-            if (stats.correct >= 10) document.getElementById('reward2').classList.add('unlocked');
-            if (stats.correct >= 20) document.getElementById('reward3').classList.add('unlocked');
 
-            // Пример отправки POST-запроса через fetch
-            fetch('/start_task', {
+        // Инициализация статистики
+        function initStats() {
+            fetch('/init_stats', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRFToken': getCookie('csrftoken'), // Обязательный заголовок
-                },
-                body: JSON.stringify(stats),
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Успех:', data);
-            })
-            .catch(error => {
-                console.error('Ошибка:', error);
-            });
+                    'X-CSRFToken': getCookie('csrftoken'),
+                }
+            }).then(data => data.json()).then(stats => updateLocalStats(stats));
         }
-        
+
+        // Обновление статистики на странице
+        function updateStats(isCorrect) {
+            fetch('/update_stats', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken'),
+                },
+                body: JSON.stringify({"isCorrect": isCorrect, "currentTopic": currentTopic}),
+            }).then(data => data.json()).then(stats => updateLocalStats(stats));
+        }
+
+        function updateLocalStats(stats) {
+            document.getElementById('total-count').textContent = stats.total;
+            document.getElementById('correct-count').textContent = stats.correct;
+            document.getElementById('wrong-count').textContent = stats.total - stats.correct;
+            document.getElementById('points').textContent = stats.correct * 10;
+
+            const progressBar = document.getElementById("additionBar");
+
+            updateBar = (topic) => {
+                progress = '0%'
+                if (stats[topic].total != 0) {
+                    progress = Math.round((stats[topic].correct / stats[topic].total) * 100) + '%'
+                }
+                document.getElementById(topic + 'Bar').style.width = progress;
+                document.getElementById(topic + 'Bar').textContent = progress;
+            }
+
+            updateBar('addition')
+            updateBar('subtraction')
+            updateBar('comparison')
+            updateBar('logic')
+            updateBar('geometry')
+            updateBar('time')
+            updateBar('money')
+
+            // // Проверка наград
+            if (stats.correct >= 5) document.getElementById('reward1').classList.add('unlocked');
+            if (stats.correct >= 10) document.getElementById('reward2').classList.add('unlocked');
+            if (stats.correct >= 20) document.getElementById('reward3').classList.add('unlocked');
+        }
+
         // Генерация задачи по теме
         function generateTask(topic) {
             currentTopic = topic;
@@ -268,9 +336,9 @@
                 time: 'Время и часы',
                 money: 'Задачи с монетами'
             };
-            
+
             document.getElementById('taskTopic').textContent = topicNames[topic];
-            
+
             // Генерация задачи в зависимости от темы
             if (topic === 'addition') {
                 const a = Math.floor(Math.random() * 10) + 1;
@@ -321,12 +389,12 @@
                     answer: coins1 * 5 + coins2 * 2
                 };
             }
-            
+
             document.getElementById('taskText').textContent = currentTask.text;
             document.getElementById('answerInput').value = '';
             document.getElementById('feedback').textContent = '';
-            
-            // Показываем модальное окно
+
+            // Открыть модальное окно
             const modal = new bootstrap.Modal(document.getElementById('taskModal'));
             modal.show();
         }
@@ -340,29 +408,23 @@
         function checkAnswer() {
             const userAnswer = parseInt(document.getElementById('answerInput').value);
             const feedback = document.getElementById('feedback');
-            
-            stats.total++;
-            
+
+            isCorrect = false;
             if (userAnswer === currentTask.answer) {
-                stats.correct++;
+                isCorrect = true;
                 feedback.textContent = '✅ Правильно! Ты молодец!';
                 feedback.style.color = 'green';
                 
                 // Показываем следующую задачу через 2 секунды
-                setTimeout(() => {
-                    generateTask(currentTopic);
-                }, 2000);
+                setTimeout(() => { generateTask(currentTopic); }, 2000);
             } else {
-                stats.wrong++;
                 feedback.textContent = `❌ Попробуй ещё раз! Правильный ответ: ${currentTask.answer}`;
                 feedback.style.color = 'red';
             }
-            
-            updateStats();
+            updateStats(isCorrect);
         }
-        
-        // Инициализация
-        updateStats();
+
+        initStats();
     </script>
 </body>
 </html>

@@ -6,7 +6,7 @@
 1. Скачать этот репозиторий или клонировать его
 2. Перейти в папку репозитория при помощи `cd`
 3. `pip install -r requirements.txt`
-4. `python manage.py runserver --insecure`
+4. `python3 manage.py runserver --insecure`
 
 ## Версии ПО
 

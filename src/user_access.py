@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from src.factory import from_json, to_json
-from src.user import User
+from src.user import User, Stats
 
 LOGINS='./data/users/login.json'
 ACTIVE_USER='./data/users/active_user.json'
@@ -35,10 +35,8 @@ class LoginInfo:
     @staticmethod
     def store(email: str):
         logins = LoginInfo.load()
-        print(f'LoginInfo.load() {logins}')
         userId = len(logins)
         logins.append(LoginInfo(email, userId, True))
-        print(logins)
         to_json(LOGINS, logins)
         return userId
 
@@ -48,7 +46,6 @@ class LoginInfo:
 
 def findUserId(email: str):
     logins = LoginInfo.load()
-    print(f'logins: {logins}')
     for login in logins:
         if login.email == email:
             return login.userId
@@ -58,21 +55,17 @@ def findUser(userId: int):
     return User.load(userId)
 
 def createUser(name: str, email: str, password: str):
-    print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
     userId = LoginInfo.store(email)
-    print(userId)
     ActiveUser.store(userId)
-    return User.store(userId, name, email, password)
+    user = User(userId, name, email, password, Stats())
+    User.store(user)
+    return user
 
 def loginUser(email: str, password: str):
-    print("loginUser")
     userId = findUserId(email)
-    print(f"userId: {userId}")
     if userId == -1:
         return None
-    print('before findUser')
     user = findUser(userId)
-    print(f'findUser: {user}')
     if user.password == password:
         ActiveUser.store(userId)
         return user
@@ -87,3 +80,16 @@ def registerUser(name: str, email: str, password: str):
 def getActiveUser():
     activeUser = ActiveUser.load()
     return findUser(activeUser.userId)
+
+def getActiveStats():
+    activeUser = ActiveUser.load()
+    user = findUser(activeUser.userId)
+    return user.get_stats()
+
+def updateActiveStats(isCorrect: bool, topic: str):
+
+    activeUser = ActiveUser.load()
+    user = findUser(activeUser.userId)
+    user.update_stats(isCorrect, topic)
+    User.store(user)
+    return user.get_stats()

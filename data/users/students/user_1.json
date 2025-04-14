@@ -1,1 +1,1 @@
-{"userId": 1, "name": "\u0421\u0430\u0448\u0430", "email": "panf@mail.ru", "password": "12345678", "stats": {"correct_answers": 0}}
+{"userId": 1, "name": "\u0421\u0430\u0448\u0430", "email": "panferovi@list.ru", "password": "12312312", "stats": {"total": 4, "correct": 4, "addition": {"total": 3, "correct": 3}, "subtraction": {"total": 0, "correct": 0}, "comparison": {"total": 0, "correct": 0}, "logic": {"total": 0, "correct": 0}, "time": {"total": 0, "correct": 0}, "money": {"total": 1, "correct": 1}}}
