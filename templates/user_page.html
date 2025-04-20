@@ -283,14 +283,14 @@
         }
 
         // Обновление статистики на странице
-        function updateStats(isCorrect) {
+        function updateStats(is_correct) {
             fetch('/update_stats', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRFToken': getCookie('csrftoken'),
                 },
-                body: JSON.stringify({"isCorrect": isCorrect, "currentTopic": currentTopic}),
+                body: JSON.stringify({"is_correct": is_correct, "currentTopic": currentTopic}),
             }).then(data => data.json()).then(stats => updateLocalStats(stats));
         }
 
@@ -409,9 +409,9 @@
             const userAnswer = parseInt(document.getElementById('answerInput').value);
             const feedback = document.getElementById('feedback');
 
-            isCorrect = false;
+            is_correct = false;
             if (userAnswer === currentTask.answer) {
-                isCorrect = true;
+                is_correct = true;
                 feedback.textContent = '✅ Правильно! Ты молодец!';
                 feedback.style.color = 'green';
                 
@@ -421,7 +421,7 @@
                 feedback.textContent = `❌ Попробуй ещё раз! Правильный ответ: ${currentTask.answer}`;
                 feedback.style.color = 'red';
             }
-            updateStats(isCorrect);
+            updateStats(is_correct);
         }
 
         initStats();

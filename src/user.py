@@ -1,6 +1,7 @@
+"""Module represents user class and api to work with"""
+
 from dataclasses import dataclass
 from src.factory import from_json, to_json
-from copy import deepcopy
 
 @dataclass
 class TopicStats:
@@ -8,23 +9,22 @@ class TopicStats:
         self.total = total
         self.correct = correct
 
-    @property
-    def percent(self):
-        if self.total == 0:
-            return 0
-        return self.correct * 100 / self.total
-
     total: int
     correct: int
 
 @dataclass
 class Stats:
-    def __init__(self, total=0, correct=0, addition=TopicStats(),
-                                           subtraction=TopicStats(),
-                                           comparison=TopicStats(),
-                                           logic=TopicStats(),
-                                           time=TopicStats(),
-                                           money=TopicStats()):
+    def __init__(
+        self,
+        total=0,
+        correct=0,
+        addition=TopicStats(),
+        subtraction=TopicStats(),
+        comparison=TopicStats(),
+        logic=TopicStats(),
+        time=TopicStats(),
+        money=TopicStats(),
+    ):
         self.total = total
         self.correct = correct
         self.addition = addition
@@ -34,14 +34,15 @@ class Stats:
         self.time = time
         self.money = money
 
-    def update_stats(self, isCorrect, topic):
-        topicObj = getattr(self, topic)
+    def update_stats(self, is_correct, topic):
+        """Function updates global and topic stats"""
+        topic_obj = getattr(self, topic)
         self.total += 1
-        topicObj.total += 1
-        if isCorrect:
+        topic_obj.total += 1
+        if is_correct:
             self.correct += 1
-            topicObj.correct += 1
-        setattr(self, topic, topicObj)
+            topic_obj.correct += 1
+        setattr(self, topic, topic_obj)
 
     total: int
     correct: int
@@ -54,28 +55,32 @@ class Stats:
 
 @dataclass
 class User:
-    def __init__(self, userId, name, email, password, stats):
-        self.userId = userId
+    def __init__(self, user_id, name, email, password, stats):
+        self.user_id = user_id
         self.name = name
         self.email = email
         self.password = password
         self.stats = stats
 
     @staticmethod
-    def load(userId: int):
-        return from_json(f"./data/users/students/user_{userId}.json", User);
+    def load(user_id: int):
+        """Function loads user from the server"""
+        return from_json(f"./data/users/students/user_{user_id}.json", User)
 
     @staticmethod
     def store(user):
-        to_json(f'./data/users/students/user_{user.userId}.json', user)
+        """Function stores user on the server"""
+        to_json(f"./data/users/students/user_{user.user_id}.json", user)
 
     def get_stats(self):
+        """Function returns stats of user"""
         return self.stats
 
-    def update_stats(self, isCorrect, topic):
-        self.stats.update_stats(isCorrect, topic)
+    def update_stats(self, is_correct, topic):
+        """Function updates stats of user"""
+        self.stats.update_stats(is_correct, topic)
 
-    userId: int
+    user_id: int
     name: str
     email: str
     password: str

@@ -1,95 +1,116 @@
+"""Module allows to register and login user"""
+
 from dataclasses import dataclass
 from src.factory import from_json, to_json
 from src.user import User, Stats
 
-LOGINS='./data/users/login.json'
-ACTIVE_USER='./data/users/active_user.json'
+LOGINS = "./data/users/login.json"
+ACTIVE_USER = "./data/users/active_user.json"
+
 
 @dataclass
 class ActiveUser:
-    def __init__(self, userId: int):
-        self.userId = userId
+    def __init__(self, user_id: int):
+        self.user_id = user_id
 
     @staticmethod
     def load():
-        return from_json(ACTIVE_USER, ActiveUser);
+        """Function loads active user from the server"""
+        return from_json(ACTIVE_USER, ActiveUser)
 
     @staticmethod
-    def store(userId: int):
-        activeUser = ActiveUser(userId);
-        return to_json(ACTIVE_USER, activeUser);
+    def store(user_id: int):
+        """Function stores active user on the server"""
+        active_user = ActiveUser(user_id)
+        return to_json(ACTIVE_USER, active_user)
 
-    userId: int
+    user_id: int
+
 
 @dataclass
 class LoginInfo:
-    def __init__(self, email: str, userId: int, isStudent: bool):
+    def __init__(self, email: str, user_id: int, is_student: bool):
         self.email = email
-        self.userId = userId
-        self.isStudent = isStudent
+        self.user_id = user_id
+        self.is_student = is_student
 
     @staticmethod
     def load():
-        return from_json(LOGINS, LoginInfo);
+        """Function loads array of registered users from the server"""
+        return from_json(LOGINS, LoginInfo)
 
     @staticmethod
     def store(email: str):
+        """Function appends user registered users and store to the server"""
         logins = LoginInfo.load()
-        userId = len(logins)
-        logins.append(LoginInfo(email, userId, True))
+        user_id = len(logins)
+        logins.append(LoginInfo(email, user_id, True))
         to_json(LOGINS, logins)
-        return userId
+        return user_id
 
     email: str
-    userId: int
-    isStudent: bool
+    user_id: int
+    is_student: bool
 
-def findUserId(email: str):
+
+def find_user_id(email: str):
+    """Function finds user_id by email"""
     logins = LoginInfo.load()
     for login in logins:
         if login.email == email:
-            return login.userId
+            return login.user_id
     return -1
 
-def findUser(userId: int):
-    return User.load(userId)
 
-def createUser(name: str, email: str, password: str):
-    userId = LoginInfo.store(email)
-    ActiveUser.store(userId)
-    user = User(userId, name, email, password, Stats())
+def find_user(user_id: int):
+    """Function loads user by user_id"""
+    return User.load(user_id)
+
+
+def create_user(name: str, email: str, password: str):
+    """Function creates new user with name, email and password"""
+    user_id = LoginInfo.store(email)
+    ActiveUser.store(user_id)
+    user = User(user_id, name, email, password, Stats())
     User.store(user)
     return user
 
-def loginUser(email: str, password: str):
-    userId = findUserId(email)
-    if userId == -1:
+
+def login_user(email: str, password: str):
+    """Function tries to login user"""
+    user_id = find_user_id(email)
+    if user_id == -1:
         return None
-    user = findUser(userId)
+    user = find_user(user_id)
     if user.password == password:
-        ActiveUser.store(userId)
+        ActiveUser.store(user_id)
         return user
     return None
 
-def registerUser(name: str, email: str, password: str):
-    userId = findUserId(email)
-    if userId == -1:
-        return createUser(name, email, password)
+
+def register_user(name: str, email: str, password: str):
+    """Function tries to register user"""
+    user_id = find_user_id(email)
+    if user_id == -1:
+        return create_user(name, email, password)
     return None
 
-def getActiveUser():
-    activeUser = ActiveUser.load()
-    return findUser(activeUser.userId)
 
-def getActiveStats():
-    activeUser = ActiveUser.load()
-    user = findUser(activeUser.userId)
+def get_active_user():
+    """Function returns active user"""
+    active_user = ActiveUser.load()
+    return find_user(active_user.user_id)
+
+
+def get_active_stats():
+    """Function returns stats of active user"""
+    user = get_active_user()
     return user.get_stats()
 
-def updateActiveStats(isCorrect: bool, topic: str):
 
-    activeUser = ActiveUser.load()
-    user = findUser(activeUser.userId)
-    user.update_stats(isCorrect, topic)
+def update_active_stats(is_correct: bool, topic: str):
+    """Function updates stats of active user"""
+    user = get_active_user()
+    user.update_stats(is_correct, topic)
     User.store(user)
     return user.get_stats()
